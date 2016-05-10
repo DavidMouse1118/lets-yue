@@ -402,7 +402,50 @@ angular.module('starter.controllers', [])
     .controller('loginCtrl', function ($scope, $firebaseAuth, $state,$rootScope, $ionicModal, Auth) {
 
       var ref = new Firebase($scope.firebaseUrl);
+      //$scope.db = ref;
       $scope.user = {};
+
+      //login with twitter
+      $scope.authWithtwitter=function(){
+        ref.authWithOAuthPopup("twitter", function(error, authData) {
+          if (error) {
+            console.log("Login Failed!", error);
+          } else {
+            console.log("Authenticated successfully with payload:", authData);
+            console.log(authData.twitter.displayName);
+            ref.child("users").child(authData.uid).set({
+              email: null,
+              displayName: authData.twitter.displayName
+            });
+            $rootScope.currentUserID = authData.uid;
+            $rootScope.displayName = authData.twitter.displayName;
+            console.log($rootScope.displayName);
+            $state.go("tab.activities");
+          }
+        })
+      } // End of Auth with twitter
+
+      // Authenticate With Facebook
+      $scope.authWithFacebook = function() {
+        ref.authWithOAuthPopup("facebook", function(error, authData) {
+          if (error) {
+            console.log("Log in failed due to: ", error);
+          }
+          else {
+            console.log("Logged in as" + authData.facebook.displayName);
+            ref.child("users").child(authData.uid).set({
+              email: null,
+              displayName: authData.facebook.displayName
+            });
+            $rootScope.currentUserID = authData.uid;
+            $rootScope.displayName = authData.facebook.displayName;
+            console.log($rootScope.displayName);
+            $state.go("tab.activities");
+          }
+        })
+      } // End of loginFB
+
+      // Custom login (email)
       $scope.authWithGoogle = function(){
         ref.authWithOAuthPopup("google", function(error, authData) {
           if (error) {
@@ -421,9 +464,10 @@ angular.module('starter.controllers', [])
           }
         });
       };
-      console.log($rootScope.lol);
+
+      // Email Login
       $scope.login = function(user) {
-        console.log(user);
+        // console.log(user);
         Auth.$authWithPassword({
           email: user.email,
           password: user.pass
@@ -445,6 +489,7 @@ angular.module('starter.controllers', [])
           console.log('Error: ', error);
         });
       };
+
       })
 
       .controller('signupCtrl', function ($scope,$ionicLoading,$state, $rootScope, $ionicModal, Auth) {
