@@ -11,7 +11,7 @@ Let's yue is still under development, to run a demo install node js and run:
 
 ```
 npm install -g ionic cordova
-git clone git@github.com:danblitzhou/lets-yue.git
+git clone git@github.com:davidmouse1118/lets-yue.git
 cd lets-yue/
 ionic serve
 ```
